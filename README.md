@@ -1,121 +1,161 @@
-# Alumni Portal for SOET — Frontend Prototype
+# 🎓 Alumni Portal
 
-Interactive multi-screen frontend for a Final Year Project. **No backend** — realistic demo JSON, client-side auth, and hash routing for instant preview.
+A modern, responsive Alumni Portal built to strengthen the connection between alumni, students, and the institution. The platform provides an intuitive interface for networking, communication, and alumni engagement.
 
-## Open the prototype
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![React](https://img.shields.io/badge/React-19-61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38BDF8)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-1. Open `index.html` in the Open Design preview (or any modern browser).
-2. On **Login**, use a quick demo account:
-   - **Student:** `aarav.mehta@soet.edu` (default)
-   - **Alumni:** `priya.sharma@email.com`
-   - **Admin:** `admin@soet.edu`  
-   Password: any value (e.g. `demo1234`)
+---
 
-## What’s included (16 pages)
+## 📌 Features
 
-| Route | Page |
-|-------|------|
-| `#/` | Landing |
-| `#/login` | Login |
-| `#/register` | Student / Alumni registration |
-| `#/student` | Student dashboard |
-| `#/alumni` | Alumni dashboard |
-| `#/admin` | Admin dashboard |
-| `#/directory` | Alumni directory (search, filters, pagination) |
-| `#/jobs` | Job portal |
-| `#/internships` | Internship portal |
-| `#/events` | Event management |
-| `#/chat` | Chat UI |
-| `#/profile` | User profile |
-| `#/notifications` | Notifications |
-| `#/settings` | Settings (theme, prefs) |
-| `#/about` | About |
-| `#/contact` | Contact |
+- 🎨 Modern and responsive user interface
+- 🔐 Authentication-ready frontend
+- 👤 Alumni profile pages
+- 📢 News & announcements section
+- 💼 Career and networking interface
+- 📱 Mobile-friendly design
+- ⚡ Fast performance with Next.js App Router
+- 🌙 Clean and intuitive user experience
 
-Plus alumni post-job / post-internship / mentor requests and admin verify / manage / reports screens.
+---
 
-## Features
+## 🛠️ Tech Stack
 
-- Responsive layout (mobile sidebar drawer + desktop app chrome)
-- Dark / light theme (persisted)
-- Role-based navigation
-- Search, filters, pagination
-- Loading skeletons, empty states, toasts
-- Demo charts on dashboards
-- Forms with client-side validation
+| Technology | Purpose |
+|------------|---------|
+| Next.js 16 | React Framework |
+| React 19 | Frontend Library |
+| TypeScript | Type Safety |
+| Tailwind CSS v4 | Styling |
+| ESLint | Code Quality |
 
-## Prototype folder structure (this delivery)
+---
 
-```
-.
-├── index.html          # Full interactive SPA (React 18 + Babel in-browser)
-├── brand-spec.md       # Design tokens & posture
-├── critique.json       # Self-critique score
-└── README.md           # This file
+## 📂 Project Structure
+
+```text
+Alumni-Portal/
+│
+├── app/
+├── components/
+├── public/
+├── styles/
+├── lib/
+├── hooks/
+├── types/
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## Mapping to a Vite + React production scaffold
+---
 
-When you move to a real repo, mirror this structure:
+## 🚀 Getting Started
 
-```
-src/
-  components/     # Navbar, Sidebar, Cards, Modal, Tables, …
-  pages/          # One file per route above
-  layouts/        # PublicLayout, AppLayout
-  hooks/          # useTheme, useToast, useAuth
-  context/        # AuthContext, ThemeContext
-  data/           # jobs.json, alumni.json, events.json, …
-  services/       # api.js (fetch wrappers)
-  utils/
-  routes/         # React Router config
-```
-
-### Suggested install (when you scaffold Vite)
+### Clone the repository
 
 ```bash
-npm create vite@latest soet-alumni-portal -- --template react
-cd soet-alumni-portal
+git clone https://github.com/deoreparth700-design/Alumni-Portal.git
+```
+
+### Navigate to the project
+
+```bash
+cd Alumni-Portal
+```
+
+### Install dependencies
+
+```bash
 npm install
-npm install react-router-dom react-icons framer-motion
-npm install -D tailwindcss @tailwindcss/vite
+```
+
+### Start the development server
+
+```bash
 npm run dev
 ```
 
-Commands:
+Open your browser and visit:
 
-| Command | Purpose |
-|---------|---------|
-| `npm run dev` | Local dev server |
-| `npm run build` | Production build |
-| `npm run preview` | Preview build |
+```
+http://localhost:3000
+```
 
-## Future backend integration points
+---
 
-| UI action | Suggested API |
-|-----------|----------------|
-| Login / register | `POST /api/auth/login`, `POST /api/auth/register` |
-| Session | `GET /api/auth/me` + JWT/cookie |
-| Alumni directory | `GET /api/alumni?q=&branch=&page=` |
-| Jobs / apply | `GET /api/jobs`, `POST /api/jobs/:id/apply` |
-| Internships | `GET /api/internships`, `POST /api/internships` |
-| Events / register | `GET /api/events`, `POST /api/events/:id/register` |
-| Chat | WebSocket or `GET/POST /api/conversations/:id/messages` |
-| Mentor requests | `GET/PATCH /api/mentorship/requests` |
-| Admin verify | `GET /api/admin/alumni/pending`, `POST …/verify` |
-| Notifications | `GET /api/notifications`, `PATCH …/read` |
-| Contact | `POST /api/contact` |
-| Reports export | `GET /api/admin/reports/*.csv` |
+## 📸 Screenshots
 
-Replace in-memory arrays in `index.html` (or `src/data/*`) with `services/api.js` calls. Keep the same component contracts so UI does not need a redesign.
+> Add screenshots of the application here.
 
-## Brand
+Example:
 
-- Primary: `#2563EB`
-- Secondary: `#0F172A`
-- Success / verified: `#22C55E`
-- See `brand-spec.md` for OKLch tokens and posture rules.
+```
+screenshots/
+├── home.png
+├── dashboard.png
+└── profile.png
+```
 
-## Note for evaluators
+---
 
-All metrics and listings are **labelled demo data** for the FYP frontend. No real authentication or server-side admin logic is implemented.
+## 🎯 Future Improvements
+
+- User Authentication
+- Alumni Directory
+- Job Portal
+- Event Management
+- Discussion Forum
+- Messaging System
+- Notifications
+- Admin Dashboard
+- Backend API Integration
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository
+2. Create a new feature branch
+
+```bash
+git checkout -b feature/new-feature
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push to GitHub
+
+```bash
+git push origin feature/new-feature
+```
+
+5. Open a Pull Request
+
+---
+
+## 👨‍💻 Author
+
+**Parth Deore**
+
+- GitHub: https://github.com/deoreparth700-design
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+⭐ If you found this project useful, consider giving it a star.
