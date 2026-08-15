@@ -54,7 +54,11 @@ export async function POST(req: Request) {
       userId: user.id
     });
 
-  } catch (error) {
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Login Error:", error);
+    if (error?.cause?.code === 'ENOTFOUND') {
+      return NextResponse.json({ message: 'Database connection failed. Please configure Vercel KV in .env.local and restart server.' }, { status: 500 });
+    }
+    return NextResponse.json({ message: 'Internal server error: ' + error.message }, { status: 500 });
   }
 }

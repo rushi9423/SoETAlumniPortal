@@ -6,8 +6,6 @@ import { kv } from '@vercel/kv';
 // jobs:{id} -> { ...job fields }
 
 export async function getUser(email: string) {
-  // To look up a user by email, we can maintain an index
-  // email:{email} -> userId
   const userId = await kv.get<string>(`email:${email}`);
   if (!userId) return null;
   return await kv.get(`user:${userId}`);

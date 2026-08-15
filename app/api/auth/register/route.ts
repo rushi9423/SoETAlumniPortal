@@ -22,9 +22,8 @@ export async function POST(req: Request) {
     const user = await createUser(id, email, role, password, status);
     
     // Store profile data
-    import('@/lib/db').then(({ createProfile }) => {
-       createProfile(id, { fullName, ...additionalData });
-    });
+    const { createProfile } = await import('@/lib/db');
+    await createProfile(id, { fullName, ...additionalData });
 
     return NextResponse.json({
       message: role === 'alumni' 
@@ -32,7 +31,11 @@ export async function POST(req: Request) {
         : 'Registration successful',
       user: { id, email, role, status }
     });
-  } catch (error) {
-    return NextResponse.json({ message: 'Registration failed' }, { status: 500 });
+  } catch (error: any) {
+    console.error("Register Error:", error);
+    if (error?.cause?.code === 'ENOTFOUND') {
+      return NextResponse.json({ message: 'Database connection failed. Please configure Vercel KV in .env.local' }, { status: 500 });
+    }
+    return NextResponse.json({ message: 'Registration failed: ' + error.message }, { status: 500 });
   }
 }
