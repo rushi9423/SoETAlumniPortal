@@ -7,7 +7,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { 
   Home, Users, Briefcase, CheckCircle, Calendar, 
   MessageSquare, Bell, User, Settings, Info, 
-  Search, Moon, LogOut 
+  Search, Moon, LogOut, Shield, BarChart3, GraduationCap
 } from 'lucide-react';
 
 const mainNavItems = [
@@ -21,9 +21,21 @@ const mainNavItems = [
   { name: 'Profile', icon: User, href: '/student/profile' },
 ];
 
-const moreNavItems = [
+const studentMoreNavItems = [
   { name: 'Settings', icon: Settings, href: '/student/settings' },
   { name: 'About', icon: Info, href: '/student/about' },
+];
+
+const adminNavItems = [
+  { name: 'Dashboard', icon: Home, href: '/admin' },
+  { name: 'Verify Alumni', icon: Shield, href: '/admin/verify' },
+  { name: 'Manage Students', icon: GraduationCap, href: '/admin/students' },
+  { name: 'Manage Alumni', icon: Users, href: '/admin/alumni' },
+  { name: 'Reports & Analytics', icon: BarChart3, href: '/admin/reports' },
+];
+
+const adminMoreNavItems = [
+  { name: 'Settings', icon: Settings, href: '/admin/settings' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -52,6 +64,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const userName = user?.profile?.fullName || 'User';
   const firstName = getFirstName(userName);
   const userEmail = user?.email || '';
+  const isAdmin = user?.role === 'admin';
+  const navItems = isAdmin ? adminNavItems : mainNavItems;
+  const moreItems = isAdmin ? adminMoreNavItems : studentMoreNavItems;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
@@ -64,7 +79,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
           <div>
             <h1 className="text-white font-semibold leading-tight">SOET Portal</h1>
-            <p className="text-xs text-gray-400">Student</p>
+            <p className="text-xs text-gray-400 capitalize">{user?.role || 'Student'}</p>
           </div>
         </div>
 
@@ -72,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="flex-1 overflow-y-auto px-4 py-6 dark-scrollbar">
             <p className="text-xs font-semibold text-gray-500 mb-4 px-2 tracking-wider">MAIN</p>
             <nav className="space-y-1">
-              {mainNavItems.map((item) => {
+              {navItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link 
@@ -91,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             <p className="text-xs font-semibold text-gray-500 mt-8 mb-4 px-2 tracking-wider">MORE</p>
             <nav className="space-y-1">
-              {moreNavItems.map((item) => {
+              {moreItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link 

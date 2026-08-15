@@ -1,92 +1,108 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
+import DashboardLayout from '@/components/DashboardLayout';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
-  const [pending, setPending] = useState<any[]>([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    fetch('/api/admin/verify')
-      .then(res => res.json())
-      .then(data => setPending(Array.isArray(data) ? data : []));
-  }, []);
-
-  const handleVerify = async (id: string, status: 'active' | 'rejected') => {
-    const res = await fetch('/api/admin/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, status })
-    });
-    if (res.ok) {
-      setPending(pending.filter(p => p.id !== id));
-      alert(`User ${status}`);
-    }
-  };
-
-  const handleLogout = () => {
-    router.push('/');
-  };
+  const pendingAlumni = [
+    { id: 1, name: 'Sneha Patel', company: 'Microsoft', batch: '2023' },
+    { id: 2, name: 'Rahul Verma', company: 'Google', batch: '2022' }
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-indigo-700 text-white p-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-        <button onClick={handleLogout} className="bg-indigo-800 px-4 py-2 rounded hover:bg-indigo-900 transition-colors">Logout</button>
-      </nav>
+    <DashboardLayout>
+      <div className="flex items-center text-sm text-gray-500 mb-6">
+        <span>Admin</span><span className="mx-2">/</span><span className="font-medium text-gray-900">Dashboard</span>
+      </div>
+      
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+      <p className="text-gray-500 mb-8">Verification, user management, and portal analytics.</p>
 
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow border-b-4 border-indigo-500">
-            <h2 className="text-xl font-bold mb-2 text-gray-800">Alumni Verification</h2>
-            <p className="text-3xl font-bold text-indigo-600">{pending.length}</p>
-            <p className="text-gray-500">Pending Requests</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[
+          { label: 'Pending verify', value: pendingAlumni.length, note: 'Alumni awaiting review', color: 'text-orange-600' },
+          { label: 'Students', value: '3,680', note: 'Registered students', color: 'text-blue-600' },
+          { label: 'Alumni', value: '1,240', note: 'Verified alumni', color: 'text-green-600' },
+          { label: 'Open jobs', value: '86', note: 'Active listings', color: 'text-purple-600' }
+        ].map(s => (
+          <div key={s.label} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div className="text-gray-500 font-medium mb-2">{s.label}</div>
+            <div className={`text-4xl font-black mb-2 ${s.color}`}>{s.value}</div>
+            <div className="text-xs text-gray-400 uppercase tracking-wider">{s.note}</div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow border-b-4 border-indigo-500">
-            <h2 className="text-xl font-bold mb-2 text-gray-800">Job Approvals</h2>
-            <p className="text-3xl font-bold text-indigo-600">0</p>
-            <p className="text-gray-500">Pending Jobs</p>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Verify Alumni Card */}
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Verify alumni</h2>
+            <Link href="/admin/verify" className="text-blue-600 text-sm font-semibold hover:underline">Open queue</Link>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow border-b-4 border-indigo-500">
-             <h2 className="text-xl font-bold mb-2 text-gray-800">Event Approvals</h2>
-            <p className="text-3xl font-bold text-indigo-600">0</p>
-            <p className="text-gray-500">Pending Events</p>
+          
+          <div className="space-y-4">
+            {pendingAlumni.map(p => (
+              <div key={p.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
+                <div>
+                  <div className="font-bold text-gray-900">{p.name}</div>
+                  <div className="text-sm text-gray-500">{p.company} · Batch {p.batch}</div>
+                </div>
+                <div className="flex gap-2">
+                  <button className="bg-green-100 text-green-700 hover:bg-green-200 px-4 py-1.5 rounded-lg text-sm font-bold transition">Verify</button>
+                  <button className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-lg text-sm font-bold transition">Reject</button>
+                </div>
+              </div>
+            ))}
+            {pendingAlumni.length === 0 && <p className="text-gray-500 text-sm">No pending verifications.</p>}
           </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Pending Alumni Verification</h2>
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          {pending.length === 0 ? (
-            <p className="p-6 text-gray-500 text-center">No pending verifications.</p>
-          ) : (
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700 border-b">
-                  <th className="p-4 font-semibold">Name</th>
-                  <th className="p-4 font-semibold">Email</th>
-                  <th className="p-4 font-semibold">Graduation Year</th>
-                  <th className="p-4 font-semibold">Company</th>
-                  <th className="p-4 font-semibold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pending.map((user) => (
-                  <tr key={user.id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium text-gray-900">{user.profile?.fullName}</td>
-                    <td className="p-4 text-gray-600">{user.email}</td>
-                    <td className="p-4 text-gray-600">{user.profile?.graduationYear}</td>
-                    <td className="p-4 text-gray-600">{user.profile?.company}</td>
-                    <td className="p-4 text-right space-x-2">
-                      <button onClick={() => handleVerify(user.id, 'active')} className="bg-green-500 text-white px-3 py-1 rounded shadow hover:bg-green-600 transition-colors">Approve</button>
-                      <button onClick={() => handleVerify(user.id, 'rejected')} className="bg-red-500 text-white px-3 py-1 rounded shadow hover:bg-red-600 transition-colors">Reject</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+        {/* Analytics Card */}
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Registrations Overview</h2>
+          <div className="h-48 flex items-end justify-between gap-2 border-b border-gray-100 pb-2">
+            {[40, 55, 48, 70, 82, 76].map((v, i) => (
+              <div key={i} className="w-full bg-blue-100 rounded-t-sm relative group" style={{ height: `${v}%` }}>
+                <div className="absolute inset-0 bg-blue-600 rounded-t-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between mt-2 text-xs font-semibold text-gray-400">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+          </div>
+        </div>
+
+        {/* Quick Links */}
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Quick links</h2>
+          <div className="space-y-3">
+            <Link href="/admin/students" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Manage students</Link>
+            <Link href="/admin/alumni" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Manage alumni</Link>
+            <Link href="/admin/reports" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Reports & analytics</Link>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Recent activity</h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+              <p className="text-sm text-gray-700 font-medium">Alumni verification requested — Sneha Patel</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              <p className="text-sm text-gray-700 font-medium">New job listing — Microsoft SDE</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+              <p className="text-sm text-gray-700 font-medium">Event capacity 70% — Resume Workshop</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
