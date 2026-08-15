@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [tab, setTab] = useState<'student' | 'alumni'>('student');
+  const [tab, setTab] = useState<'student' | 'alumni' | 'admin'>('student');
   const [form, setForm] = useState({ name: '', email: '', password: '', branch: 'CSE', batch: '2026', company: '' });
   const [loading, setLoading] = useState(false);
 
@@ -57,6 +57,13 @@ export default function RegisterPage() {
             >
               Alumni
             </button>
+            <button 
+              type="button" 
+              onClick={() => setTab('admin')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${tab === 'admin' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Admin
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -91,7 +98,7 @@ export default function RegisterPage() {
               />
             </div>
 
-            {tab === 'student' ? (
+            {tab === 'student' && (
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Branch</label>
@@ -116,7 +123,9 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-            ) : (
+            )}
+            
+            {tab === 'alumni' && (
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Current Company / Organization</label>
                 <input 
@@ -124,8 +133,23 @@ export default function RegisterPage() {
                   value={form.company}
                   onChange={e => setForm({...form, company: e.target.value})}
                   className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  required={tab === 'alumni'}
+                  required
                 />
+              </div>
+            )}
+
+            {tab === 'admin' && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Department / Role</label>
+                <input 
+                  type="text" 
+                  value={form.company}
+                  onChange={e => setForm({...form, company: e.target.value})}
+                  placeholder="e.g. Dean of Students"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+                  required
+                />
+                <p className="text-xs text-gray-500 mt-1.5">Please use your official @soet.edu email address.</p>
               </div>
             )}
 
