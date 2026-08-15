@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedRole, setSelectedRole] = useState<'student' | 'alumni' | 'admin'>('student');
 
   // If already logged in, redirect
   if (user) {
@@ -28,7 +29,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password, selectedRole }),
       });
 
       if (res.ok) {
@@ -66,6 +67,30 @@ export default function LoginPage() {
               SP
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Sign in</h1>
+          </div>
+
+          <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
+            <button 
+              type="button" 
+              onClick={() => setSelectedRole('student')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'student' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Student
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setSelectedRole('alumni')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'alumni' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Alumni
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setSelectedRole('admin')}
+              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'admin' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
+            >
+              Admin
+            </button>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4 mb-6">
