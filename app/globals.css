@@ -24,3 +24,39 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom sleek scrollbar for the dark sidebar */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155; /* Slate 700 */
+  border-radius: 10px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* Slate 600 */
+}
+
+/* Custom sleek scrollbar for light content areas */
+.light-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.light-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.light-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Slate 300 */
+  border-radius: 10px;
+}
+
+.light-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Slate 400 */
+}

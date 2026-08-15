@@ -69,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-gray-700">
+        <div className="flex-1 overflow-y-auto px-4 py-6 dark-scrollbar">
             <p className="text-xs font-semibold text-gray-500 mb-4 px-2 tracking-wider">MAIN</p>
             <nav className="space-y-1">
               {mainNavItems.map((item) => {
@@ -160,7 +160,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </header>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-8 light-scrollbar">
           {children}
         </div>
       </main>
