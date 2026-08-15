@@ -26,6 +26,21 @@ const studentMoreNavItems = [
   { name: 'About', icon: Info, href: '/student/about' },
 ];
 
+const alumniNavItems = [
+  { name: 'Dashboard', icon: Home, href: '/alumni' },
+  { name: 'Alumni directory', icon: Users, href: '/student/alumni' },
+  { name: 'Jobs', icon: Briefcase, href: '/student/jobs' },
+  { name: 'Events', icon: Calendar, href: '/student/events' },
+  { name: 'Chat', icon: MessageSquare, href: '/student/chat' },
+  { name: 'Notifications', icon: Bell, href: '/student/notifications' },
+  { name: 'Profile', icon: User, href: '/student/profile' },
+];
+
+const alumniMoreNavItems = [
+  { name: 'Settings', icon: Settings, href: '/student/settings' },
+  { name: 'About', icon: Info, href: '/student/about' },
+];
+
 const adminNavItems = [
   { name: 'Dashboard', icon: Home, href: '/admin' },
   { name: 'Verify Alumni', icon: Shield, href: '/admin/verify' },
@@ -65,8 +80,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const firstName = getFirstName(userName);
   const userEmail = user?.email || '';
   const isAdmin = user?.role === 'admin';
-  const navItems = isAdmin ? adminNavItems : mainNavItems;
-  const moreItems = isAdmin ? adminMoreNavItems : studentMoreNavItems;
+  const isAlumni = user?.role === 'alumni';
+  const navItems = isAdmin ? adminNavItems : isAlumni ? alumniNavItems : mainNavItems;
+  const moreItems = isAdmin ? adminMoreNavItems : isAlumni ? alumniMoreNavItems : studentMoreNavItems;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
