@@ -5,11 +5,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { useAuth } from '@/components/AuthProvider';
 import { Plus, Eye, Users, Briefcase, MessageSquare, Calendar as CalendarIcon, Search } from 'lucide-react';
 
-const MENTOR_REQS = [
-  { id: 'm1', student: 'Aarav Mehta', topic: 'SDE interview prep', status: 'Pending' },
-  { id: 'm2', student: 'Diya Kapoor', topic: 'Product management path', status: 'Pending' },
-  { id: 'm3', student: 'Ishaan Gupta', topic: 'Resume review', status: 'Accepted' },
-];
+
 
 const EVENTS = [
   { id: 'e1', title: 'SOET Alumni Meetup 2026', date: '2026-08-12', time: '10:00 AM', seats: 120, registered: 86 },
@@ -52,7 +48,7 @@ export default function AlumniDashboard() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
             Profile views <Eye className="w-4 h-4 text-blue-500" />
@@ -60,13 +56,7 @@ export default function AlumniDashboard() {
           <div className="text-3xl font-bold text-gray-900 mb-1">128</div>
           <div className="text-xs text-gray-500">Last 30 days</div>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
-            Mentor requests <Users className="w-4 h-4 text-green-500" />
-          </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">{MENTOR_REQS.filter(m => m.status === 'Pending').length}</div>
-          <div className="text-xs text-gray-500">Awaiting response</div>
-        </div>
+
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
           <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
             Jobs posted <Briefcase className="w-4 h-4 text-purple-500" />
@@ -86,28 +76,7 @@ export default function AlumniDashboard() {
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Mentor requests */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Mentor requests</h2>
-          <div className="space-y-4">
-            {MENTOR_REQS.map(m => (
-              <div key={m.id} className="flex justify-between items-center">
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm">{m.student}</div>
-                  <div className="text-xs text-gray-500">{m.topic}</div>
-                </div>
-                {m.status === 'Pending' ? (
-                  <div className="flex gap-2">
-                    <button className="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded-lg hover:bg-green-200 transition">Accept</button>
-                    <button className="px-3 py-1.5 bg-gray-100 text-gray-600 text-xs font-bold rounded-lg hover:bg-gray-200 transition">Decline</button>
-                  </div>
-                ) : (
-                  <span className="px-2 py-1 bg-green-50 text-green-600 text-xs font-bold uppercase tracking-wider rounded-full">{m.status}</span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Your events */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

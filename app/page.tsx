@@ -10,10 +10,10 @@ export default function LandingPage() {
   ];
 
   const features = [
-    { icon: Users, title: 'Alumni network', body: 'Search verified graduates by batch, company, and skills. Request mentorship in one click.' },
+    { icon: Users, title: 'Alumni network', body: 'Search verified graduates by batch, company, and skills. Connect instantly.' },
     { icon: Briefcase, title: 'Jobs & internships', body: 'Browse roles posted by alumni and partners. Apply with your SOET profile.' },
     { icon: Calendar, title: 'Campus events', body: 'Meetups, workshops, and AMAs — register and get reminders in your feed.' },
-    { icon: MessageSquare, title: 'Secure messaging', body: 'Chat with mentors and peers inside the portal — no personal number required.' },
+    { icon: MessageSquare, title: 'Secure messaging', body: 'Chat with alumni and peers inside the portal — no personal number required.' },
   ];
 
   return (
@@ -43,7 +43,7 @@ export default function LandingPage() {
               Your career network, <br/>built for SOET.
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
-              Connect with alumni, apply for roles, find mentors, and join events — one portal for students, graduates, and administrators.
+              Connect with alumni, apply for roles, and join events — one portal for students, graduates, and administrators.
             </p>
             <div className="flex items-center gap-4 pt-4">
               <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20 flex items-center gap-2 transition">

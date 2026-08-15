@@ -54,7 +54,7 @@ export default function AdminReportsPage() {
             </div>
             <div>
               <div className="flex justify-between text-sm font-bold text-gray-700 mb-2">
-                <span>Faculty/Admin</span>
+                <span>Admin</span>
                 <span>5%</span>
               </div>
               <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -70,7 +70,7 @@ export default function AdminReportsPage() {
         <h2 className="text-xl font-bold text-gray-900 mb-6">Engagement Metrics</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 bg-gray-50 rounded-xl border border-gray-100">
-            <div className="text-gray-500 font-medium mb-1">Total Mentorships</div>
+            <div className="text-gray-500 font-medium mb-1">Total Announcements</div>
             <div className="text-3xl font-black text-gray-900">342</div>
             <div className="text-sm text-green-600 font-bold mt-2">↑ 12% this month</div>
           </div>

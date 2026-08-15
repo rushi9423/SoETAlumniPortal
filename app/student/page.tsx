@@ -29,9 +29,7 @@ export default function StudentDashboard() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {firstName}</h1>
           <p className="text-gray-500 text-sm">B.Tech {department} • Student • Batch {batch}</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm">
-          Find mentors
-        </button>
+
       </div>
 
       {/* Metrics Grid */}
@@ -197,7 +195,7 @@ export default function StudentDashboard() {
           </div>
           <div className="p-6 space-y-6 overflow-y-auto">
             <div>
-              <h3 className="font-semibold text-gray-900 text-sm">Mentor request accepted</h3>
+              <h3 className="font-semibold text-gray-900 text-sm">Application status updated</h3>
               <p className="text-xs text-gray-400 mt-1">12 min ago</p>
             </div>
             <div>

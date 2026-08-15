@@ -14,11 +14,11 @@ export default function AboutPage() {
           The School of Engineering and Technology (SOET) Alumni Portal is a dedicated platform designed to bridge the gap between current students and our esteemed alumni network.
         </p>
         <p className="text-gray-700 mb-4">
-          Our mission is to foster professional growth, mentorship, and career opportunities by connecting students directly with alumni who are established in their respective fields across the globe.
+          Our mission is to foster professional growth and career opportunities by connecting students directly with alumni who are established in their respective fields across the globe.
         </p>
         <h3 className="text-xl font-bold text-gray-900 mt-8 mb-2">Key Features</h3>
         <ul className="list-disc pl-5 text-gray-700 space-y-2">
-          <li><strong>Mentorship:</strong> Connect with alumni for career guidance and resume reviews.</li>
+
           <li><strong>Job Opportunities:</strong> Access exclusive job and internship postings directly from alumni companies.</li>
           <li><strong>Networking Events:</strong> Stay updated on alumni meetups, tech talks, and workshops.</li>
         </ul>

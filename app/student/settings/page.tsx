@@ -19,7 +19,7 @@ export default function SettingsPage() {
             </label>
             <label className="flex items-center space-x-3">
               <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" defaultChecked />
-              <span className="text-gray-700">Messages from alumni mentors</span>
+              <span className="text-gray-700">Messages from alumni</span>
             </label>
             <label className="flex items-center space-x-3">
               <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />

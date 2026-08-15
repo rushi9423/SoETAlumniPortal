@@ -4,7 +4,7 @@ import { Bell, UserCheck, Briefcase } from 'lucide-react';
 
 export default function NotificationsPage() {
   const notifications = [
-    { type: 'mentor', text: 'Priya Sharma accepted your mentor request.', time: '12 mins ago', icon: UserCheck, color: 'text-green-600', bg: 'bg-green-100' },
+    { type: 'application', text: 'Your job application was reviewed.', time: '12 mins ago', icon: UserCheck, color: 'text-green-600', bg: 'bg-green-100' },
     { type: 'job', text: 'New job match: Frontend Developer at Razorpay.', time: '1 hr ago', icon: Briefcase, color: 'text-blue-600', bg: 'bg-blue-100' },
     { type: 'system', text: 'Your profile has been updated successfully.', time: '1 day ago', icon: Bell, color: 'text-gray-600', bg: 'bg-gray-100' }
   ];
