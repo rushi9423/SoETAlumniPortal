@@ -1,107 +1,208 @@
 'use client';
 
-import DashboardLayout from '@/components/DashboardLayout';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import DashboardLayout from '@/components/DashboardLayout';
+import { adminService, AdminMetrics } from '@/lib/services/adminService';
+import { 
+  Users, GraduationCap, ShieldAlert, Briefcase, 
+  Calendar, ArrowRight, ShieldCheck, FileCheck, UserCheck 
+} from 'lucide-react';
 
 export default function AdminDashboard() {
-  const pendingAlumni = [
-    { id: 1, name: 'Sneha Patel', company: 'Microsoft', batch: '2023' },
-    { id: 2, name: 'Rahul Verma', company: 'Google', batch: '2022' }
-  ];
+  const [metrics, setMetrics] = useState<AdminMetrics>({
+    totalStudents: 0,
+    totalAlumni: 0,
+    verifiedAlumni: 0,
+    pendingAlumni: 0,
+    totalJobs: 0,
+    pendingJobs: 0,
+    totalEvents: 0,
+    pendingEvents: 0,
+    totalApplications: 0,
+    totalRegistrations: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadMetrics() {
+      try {
+        const data = await adminService.getDashboardMetrics();
+        setMetrics(data);
+      } catch (err) {
+        console.error('Failed to load admin metrics:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadMetrics();
+  }, []);
 
   return (
     <DashboardLayout>
-      <div className="flex items-center text-sm text-gray-500 mb-6">
-        <span>Admin</span><span className="mx-2">/</span><span className="font-medium text-gray-900">Dashboard</span>
-      </div>
-      
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-      <p className="text-gray-500 mb-8">Verification, user management, and portal analytics.</p>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {[
-          { label: 'Pending verify', value: pendingAlumni.length, note: 'Alumni awaiting review', color: 'text-orange-600' },
-          { label: 'Students', value: '3,680', note: 'Registered students', color: 'text-blue-600' },
-          { label: 'Alumni', value: '1,240', note: 'Verified alumni', color: 'text-green-600' },
-          { label: 'Open jobs', value: '86', note: 'Active listings', color: 'text-purple-600' }
-        ].map(s => (
-          <div key={s.label} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-            <div className="text-gray-500 font-medium mb-2">{s.label}</div>
-            <div className={`text-4xl font-black mb-2 ${s.color}`}>{s.value}</div>
-            <div className="text-xs text-gray-400 uppercase tracking-wider">{s.note}</div>
-          </div>
-        ))}
+      {/* Breadcrumbs */}
+      <div className="flex items-center text-xs font-semibold text-slate-400 mb-6 uppercase tracking-wider">
+        <span>Administration</span>
+        <span className="mx-2 text-slate-300">/</span>
+        <span className="text-blue-600">Executive Overview</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Verify Alumni Card */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Verify alumni</h2>
-            <Link href="/admin/verify" className="text-blue-600 text-sm font-semibold hover:underline">Open queue</Link>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">SOET Admin Console</h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Real-time platform metrics, verification queue, and moderations.
+          </p>
+        </div>
+      </div>
+
+      {/* Action Banners */}
+      {metrics.pendingAlumni > 0 && (
+        <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <h4 className="text-xs font-bold text-amber-900">
+                {metrics.pendingAlumni} Alumni Pending Verification
+              </h4>
+              <p className="text-xs text-amber-700">New graduate registrations awaiting your authorization.</p>
+            </div>
           </div>
-          
-          <div className="space-y-4">
-            {pendingAlumni.map(p => (
-              <div key={p.id} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                <div>
-                  <div className="font-bold text-gray-900">{p.name}</div>
-                  <div className="text-sm text-gray-500">{p.company} · Batch {p.batch}</div>
-                </div>
-                <div className="flex gap-2">
-                  <button className="bg-green-100 text-green-700 hover:bg-green-200 px-4 py-1.5 rounded-lg text-sm font-bold transition">Verify</button>
-                  <button className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-1.5 rounded-lg text-sm font-bold transition">Reject</button>
-                </div>
-              </div>
-            ))}
-            {pendingAlumni.length === 0 && <p className="text-gray-500 text-sm">No pending verifications.</p>}
+          <Link
+            href="/admin/verify"
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl shadow-md transition self-start sm:self-auto"
+          >
+            Review Queue →
+          </Link>
+        </div>
+      )}
+
+      {/* Dynamic Statistics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        
+        {/* Total Students */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Students</span>
+            <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+              <GraduationCap className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900">{metrics.totalStudents}</div>
+            <p className="text-[11px] text-slate-500 mt-1">Enrolled & registered</p>
           </div>
         </div>
 
-        {/* Analytics Card */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Registrations Overview</h2>
-          <div className="h-48 flex items-end justify-between gap-2 border-b border-gray-100 pb-2">
-            {[40, 55, 48, 70, 82, 76].map((v, i) => (
-              <div key={i} className="w-full bg-blue-100 rounded-t-sm relative group" style={{ height: `${v}%` }}>
-                <div className="absolute inset-0 bg-blue-600 rounded-t-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              </div>
-            ))}
+        {/* Total Alumni */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Alumni</span>
+            <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+              <Users className="w-5 h-5" />
+            </div>
           </div>
-          <div className="flex justify-between mt-2 text-xs font-semibold text-gray-400">
-            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+          <div>
+            <div className="text-3xl font-black text-slate-900">{metrics.totalAlumni}</div>
+            <p className="text-[11px] text-emerald-600 font-bold mt-1">
+              {metrics.verifiedAlumni} Verified • {metrics.pendingAlumni} Pending
+            </p>
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Quick links</h2>
-          <div className="space-y-3">
-            <Link href="/admin/students" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Manage students</Link>
-            <Link href="/admin/alumni" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Manage alumni</Link>
-            <Link href="/admin/reports" className="block w-full text-center bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold py-3 rounded-xl transition">Reports & analytics</Link>
+        {/* Jobs Posted */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jobs & Internships</span>
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
+              <Briefcase className="w-5 h-5" />
+            </div>
+          </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900">{metrics.totalJobs}</div>
+            <p className="text-[11px] text-slate-500 mt-1">
+              {metrics.pendingJobs > 0 ? (
+                <span className="text-amber-600 font-bold">{metrics.pendingJobs} Pending Approval</span>
+              ) : (
+                'All approved'
+              )}
+            </p>
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Recent activity</h2>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-              <p className="text-sm text-gray-700 font-medium">Alumni verification requested — Sneha Patel</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              <p className="text-sm text-gray-700 font-medium">New job listing — Microsoft SDE</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-              <p className="text-sm text-gray-700 font-medium">Event capacity 70% — Resume Workshop</p>
+        {/* Events */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Campus Events</span>
+            <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+              <Calendar className="w-5 h-5" />
             </div>
           </div>
+          <div>
+            <div className="text-3xl font-black text-slate-900">{metrics.totalEvents}</div>
+            <p className="text-[11px] text-slate-500 mt-1">{metrics.totalRegistrations} total registrations</p>
+          </div>
         </div>
+
+      </div>
+
+      {/* Quick Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <Link
+          href="/admin/verify"
+          className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 transition group flex flex-col justify-between"
+        >
+          <div>
+            <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-4">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">Alumni Verification</h3>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Verify credentials, batch graduation records, and authorize newly registered alumni.
+            </p>
+          </div>
+          <div className="mt-4 flex items-center text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+            Open Queue →
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/students"
+          className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 transition group flex flex-col justify-between"
+        >
+          <div>
+            <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center mb-4">
+              <UserCheck className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">Students Management</h3>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Browse student directory, check department enrollments, and manage account statuses.
+            </p>
+          </div>
+          <div className="mt-4 flex items-center text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+            View Students →
+          </div>
+        </Link>
+
+        <Link
+          href="/admin/jobs"
+          className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-300 transition group flex flex-col justify-between"
+        >
+          <div>
+            <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-4">
+              <FileCheck className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">Job Approvals</h3>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Moderate and approve career opportunities posted by alumni before they go live.
+            </p>
+          </div>
+          <div className="mt-4 flex items-center text-xs font-bold text-blue-600 group-hover:translate-x-1 transition-transform">
+            Review Jobs →
+          </div>
+        </Link>
+
       </div>
     </DashboardLayout>
   );

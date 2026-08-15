@@ -1,198 +1,79 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import Link from 'next/link';
+import { GraduationCap, Users, ArrowRight } from 'lucide-react';
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [tab, setTab] = useState<'student' | 'alumni' | 'admin'>('student');
-  const [form, setForm] = useState({ name: '', email: '', password: '', branch: 'CSE', batch: '2026', company: '' });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    try {
-      const payload = {
-        fullName: form.name,
-        email: form.email,
-        password: form.password,
-        role: tab,
-        branch: form.branch,
-        batch: form.batch,
-        company: form.company
-      };
-
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        router.push('/login');
-      } else {
-        const data = await res.json();
-        setError(data.message || 'Registration failed');
-      }
-    } catch (err) {
-      setError('An error occurred during registration');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function RegisterSelectionPage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
-      <nav className="h-16 flex items-center justify-between px-8 bg-white border-b border-gray-200">
-        <Link href="/" className="flex items-center gap-3 font-semibold text-lg">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-600/30">
-            SP
-          </div>
-          SOET Portal
-        </Link>
-      </nav>
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40rem] h-[40rem] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
 
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="bg-white w-full max-w-md rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-600/30">
-              SP
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
-          </div>
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center mb-8">
+        <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-blue-500/25 border border-blue-400/20 mx-auto mb-4">
+          SP
+        </div>
+        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+          Join SOET Alumni Portal
+        </h2>
+        <p className="mt-2 text-sm text-slate-400 font-medium">
+          Select your account type to register
+        </p>
+      </div>
 
-          <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
-            <button 
-              type="button" 
-              onClick={() => setTab('student')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${tab === 'student' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Student
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setTab('alumni')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${tab === 'alumni' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Alumni
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setTab('admin')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${tab === 'admin' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Admin
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl relative z-10 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          {/* Student Registration Card */}
+          <Link
+            href="/register/student"
+            className="group bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/50 p-6 rounded-3xl transition-all duration-200 shadow-xl flex flex-col justify-between"
+          >
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Full name</label>
-              <input 
-                type="text" 
-                value={form.name}
-                onChange={e => setForm({...form, name: e.target.value})}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                required 
-              />
+              <div className="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Student Account</h3>
+              <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                Current SOET students can browse the alumni network, apply for jobs & internships, and join events.
+              </p>
             </div>
+            <div className="flex items-center text-xs font-bold text-blue-400 group-hover:text-blue-300 gap-1.5">
+              Register as Student <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </Link>
+
+          {/* Alumni Registration Card */}
+          <Link
+            href="/register/alumni"
+            className="group bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-blue-500/50 p-6 rounded-3xl transition-all duration-200 shadow-xl flex flex-col justify-between"
+          >
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
-              <input 
-                type="email" 
-                value={form.email}
-                onChange={e => setForm({...form, email: e.target.value})}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                required 
-              />
+              <div className="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Alumni Account</h3>
+              <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                Graduates can post job opportunities, host networking events, and connect with fellow alumni.
+              </p>
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-              <input 
-                type="password" 
-                value={form.password}
-                onChange={e => setForm({...form, password: e.target.value})}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                required 
-              />
+            <div className="flex items-center text-xs font-bold text-indigo-400 group-hover:text-indigo-300 gap-1.5">
+              Register as Alumni <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
+          </Link>
 
-            {tab === 'student' && (
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Branch</label>
-                  <select 
-                    value={form.branch}
-                    onChange={e => setForm({...form, branch: e.target.value})}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
-                  >
-                    <option>CSE</option>
-                    <option>IT</option>
-                    <option>ECE</option>
-                    <option>MECH</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Batch</label>
-                  <input 
-                    type="text" 
-                    value={form.batch}
-                    onChange={e => setForm({...form, batch: e.target.value})}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  />
-                </div>
-              </div>
-            )}
-            
-            {tab === 'alumni' && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Current Company / Organization</label>
-                <input 
-                  type="text" 
-                  value={form.company}
-                  onChange={e => setForm({...form, company: e.target.value})}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  required
-                />
-              </div>
-            )}
+        </div>
 
-            {tab === 'admin' && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Department / Role</label>
-                <input 
-                  type="text" 
-                  value={form.company}
-                  onChange={e => setForm({...form, company: e.target.value})}
-                  placeholder="e.g. Dean of Students"
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1.5">Please use your official @soet.edu email address.</p>
-              </div>
-            )}
-
-            {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/20 transition disabled:opacity-50 mt-4"
-            >
-              {loading ? 'Creating account...' : 'Create account'}
-            </button>
-          </form>
-
-          <p className="text-center text-sm text-gray-500 mt-8">
-            Already have an account? <Link href="/login" className="text-blue-600 font-bold hover:underline">Sign in</Link>
+        <div className="mt-8 text-center">
+          <p className="text-xs text-slate-400">
+            Already have an account?{' '}
+            <Link href="/login" className="font-semibold text-blue-400 hover:text-blue-300 transition">
+              Sign in
+            </Link>
           </p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

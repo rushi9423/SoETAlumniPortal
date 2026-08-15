@@ -1,137 +1,183 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/components/AuthProvider';
+import { useRouter } from 'next/navigation';
+import { authService } from '@/lib/services/authService';
+import { Shield, GraduationCap, Users, AlertCircle, ArrowRight, Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const [role, setRole] = useState<'student' | 'alumni' | 'admin'>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [selectedRole, setSelectedRole] = useState<'student' | 'alumni' | 'admin'>('student');
-
-  // If already logged in, redirect
-  if (user) {
-    router.push(`/${user.role}`);
-    return null;
-  }
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
-    setError('');
 
     try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, selectedRole }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        // Force a hard reload so AuthProvider re-fetches user cookie
-        window.location.href = `/${data.role}`;
+      const { profile } = await authService.signIn(email.trim(), password, role);
+      
+      // Role-based routing
+      if (profile.role === 'admin') {
+        router.push('/admin');
+      } else if (profile.role === 'alumni') {
+        router.push('/alumni');
       } else {
-        const err = await res.json();
-        setError(err.message || 'Login failed');
+        router.push('/student');
       }
-    } catch (e) {
-      setError('An error occurred during login');
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
-      {/* Navigation */}
-      <nav className="h-16 flex items-center justify-between px-8 bg-white border-b border-gray-200">
-        <Link href="/" className="flex items-center gap-3 font-semibold text-lg">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-600/30">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
+      {/* Subtle Background Glows */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-blue-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40rem] h-[40rem] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="flex justify-center">
+          <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-blue-500/25 border border-blue-400/20">
             SP
           </div>
-          SOET Portal
-        </Link>
-      </nav>
+        </div>
+        <h2 className="mt-5 text-center text-3xl font-extrabold text-white tracking-tight">
+          SOET Alumni Portal
+        </h2>
+        <p className="mt-2 text-center text-sm text-slate-400 font-medium">
+          Sign in to access your enterprise dashboard
+        </p>
+      </div>
 
-      <main className="flex-1 flex items-center justify-center p-8">
-        <div className="bg-white w-full max-w-md rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-600/30">
-              SP
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 px-4">
+        <div className="bg-slate-900/90 backdrop-blur-xl py-8 px-6 shadow-2xl border border-slate-800 rounded-3xl sm:px-10">
+          
+          {/* Step 1: Role Selector */}
+          <div className="mb-6">
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              Select Your Role
+            </label>
+            <div className="grid grid-cols-3 gap-2 bg-slate-950/80 p-1.5 rounded-2xl border border-slate-800">
+              <button
+                type="button"
+                onClick={() => setRole('student')}
+                className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  role === 'student'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5" />
+                Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('alumni')}
+                className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  role === 'alumni'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5" />
+                Alumni
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('admin')}
+                className={`flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  role === 'admin'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <Shield className="w-3.5 h-3.5" />
+                Admin
+              </button>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Sign in</h1>
           </div>
 
-          <div className="flex p-1 bg-gray-100 rounded-xl mb-6">
-            <button 
-              type="button" 
-              onClick={() => setSelectedRole('student')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'student' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Student
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setSelectedRole('alumni')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'alumni' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Alumni
-            </button>
-            <button 
-              type="button" 
-              onClick={() => setSelectedRole('admin')}
-              className={`flex-1 py-2 text-sm font-bold rounded-lg transition ${selectedRole === 'admin' ? 'bg-white shadow-sm text-blue-600' : 'text-gray-500 hover:text-gray-900'}`}
-            >
-              Admin
-            </button>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-4 mb-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
-              <input 
-                type="email" 
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                required 
-              />
+          {error && (
+            <div className="mb-6 bg-red-950/50 border border-red-800/80 rounded-2xl p-4 flex items-start gap-3 text-red-300 text-xs font-medium animate-fadeIn">
+              <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleLogin}>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-                required 
-              />
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@university.edu"
+                  className="block w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                />
+              </div>
             </div>
 
-            {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="block w-full pl-10 pr-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                />
+              </div>
+            </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-600/20 transition disabled:opacity-50 mt-2"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg shadow-blue-600/30 transition-all disabled:opacity-50 cursor-pointer"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Authenticating...' : `Sign in as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
+              {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
 
-
-          <p className="text-center text-sm text-gray-500 mt-8">
-            New here? <Link href="/register" className="text-blue-600 font-bold hover:underline">Create an account</Link>
-          </p>
+          {role !== 'admin' ? (
+            <div className="mt-6 text-center border-t border-slate-800/80 pt-5">
+              <p className="text-xs text-slate-400">
+                Don't have an account?{' '}
+                <Link
+                  href={role === 'student' ? '/register/student' : '/register/alumni'}
+                  className="font-semibold text-blue-400 hover:text-blue-300 transition"
+                >
+                  Register as {role}
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6 text-center border-t border-slate-800/80 pt-5">
+              <p className="text-xs text-slate-500">
+                Admin accounts are provisioned securely by project administration.
+              </p>
+            </div>
+          )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,138 +1,203 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import DashboardLayout from '@/components/DashboardLayout';
 import { useAuth } from '@/components/AuthProvider';
-import { Plus, Eye, Users, Briefcase, MessageSquare, Calendar as CalendarIcon, Search } from 'lucide-react';
-
-
-
-const EVENTS = [
-  { id: 'e1', title: 'SOET Alumni Meetup 2026', date: '2026-08-12', time: '10:00 AM', seats: 120, registered: 86 },
-  { id: 'e2', title: 'Resume & Interview Workshop', date: '2026-07-28', time: '4:00 PM', seats: 200, registered: 154 },
-];
-
-const CHATS = [
-  { id: 'c1', name: 'Priya Sharma', role: 'Student · 2026', last: 'Thanks for the guidance!', avatar: 'PS' },
-  { id: 'c2', name: 'Rohan Desai', role: 'Student · 2027', last: 'Can we schedule a mock interview?', avatar: 'RD' },
-];
+import { jobService, JobItem } from '@/lib/services/jobService';
+import { eventService, EventItem } from '@/lib/services/eventService';
+import { announcementService, AnnouncementItem } from '@/lib/services/announcementService';
+import { 
+  Briefcase, Calendar, Megaphone, Plus, 
+  ShieldCheck, ShieldAlert, ArrowRight, Building, MapPin, Clock 
+} from 'lucide-react';
 
 export default function AlumniDashboard() {
   const { user } = useAuth();
-  const userName = user?.profile?.fullName || 'Alumni User';
-  const company = user?.profile?.company || 'Company';
-  const batch = user?.profile?.batch || 'Batch';
-  const title = (user?.profile as any)?.jobTitle || 'Role';
-  
+  const [myJobs, setMyJobs] = useState<JobItem[]>([]);
+  const [myEvents, setMyEvents] = useState<EventItem[]>([]);
+  const [announcements, setAnnouncements] = useState<AnnouncementItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      if (!user) return;
+      try {
+        const [jobsData, eventsData, announcementsData] = await Promise.all([
+          jobService.getMyPostedJobs(user.id),
+          eventService.getMyEvents(user.id),
+          announcementService.getAnnouncements(),
+        ]);
+        setMyJobs(jobsData);
+        setMyEvents(eventsData);
+        setAnnouncements(announcementsData);
+      } catch (err) {
+        console.error('Error loading alumni dashboard data:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [user]);
+
+  const userName = user?.full_name || 'Alumni Member';
+  const company = user?.alumni_profile?.company || 'Enterprise';
+  const designation = user?.alumni_profile?.designation || 'Alumni';
+  const batch = user?.alumni_profile?.graduation_year || 'SOET';
+  const verificationStatus = user?.alumni_profile?.verification_status || 'pending';
+
   return (
     <DashboardLayout>
       {/* Breadcrumbs */}
-      <div className="flex items-center text-sm text-gray-500 mb-6">
-        <span>Alumni</span><span className="mx-2">/</span><span className="font-medium text-gray-900">Dashboard</span>
+      <div className="flex items-center text-xs font-semibold text-slate-400 mb-6 uppercase tracking-wider">
+        <span>Portal</span>
+        <span className="mx-2 text-slate-300">/</span>
+        <span className="text-blue-600">Alumni Enterprise Dashboard</span>
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      {/* Verification Notice Banner if Pending */}
+      {verificationStatus === 'pending' && (
+        <div className="mb-8 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-3.5 text-amber-900">
+          <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-800">Verification Pending</h4>
+            <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+              Your profile is currently under review by the SOET department administrator. Once verified, all your posted jobs and networking events will become publicly visible to students.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Header Profile Summary */}
+      <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">{userName}</h1>
-          <p className="text-gray-500">{title} • {company} • Batch {batch}</p>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl font-black text-slate-900">{userName}</h1>
+            {verificationStatus === 'approved' && (
+              <span className="flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" /> Verified
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-500">
+            {designation} at <span className="font-semibold text-slate-700">{company}</span> • Class of {batch}
+          </p>
         </div>
+
         <div className="flex flex-wrap gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 shadow-sm transition">
-            <Plus className="w-4 h-4" /> Post job
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-xl text-sm font-bold text-white hover:bg-blue-700 shadow-md shadow-blue-600/20 transition">
-            <Plus className="w-4 h-4" /> Post internship
-          </button>
+          <Link
+            href="/student/jobs"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/25 transition"
+          >
+            <Plus className="w-4 h-4" /> Post Job / Internship
+          </Link>
+          <Link
+            href="/student/events"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-md transition"
+          >
+            <Plus className="w-4 h-4" /> Host Event
+          </Link>
         </div>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
-            Profile views <Eye className="w-4 h-4 text-blue-500" />
+      {/* Real Statistics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-bold">
+            <Briefcase className="w-6 h-6" />
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">128</div>
-          <div className="text-xs text-gray-500">Last 30 days</div>
+          <div>
+            <div className="text-2xl font-black text-slate-900">{myJobs.length}</div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Jobs Posted By You</div>
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
-            Jobs posted <Briefcase className="w-4 h-4 text-purple-500" />
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-bold">
+            <Calendar className="w-6 h-6" />
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">3</div>
-          <div className="text-xs text-gray-500">Active postings</div>
+          <div>
+            <div className="text-2xl font-black text-slate-900">{myEvents.length}</div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Events Created</div>
+          </div>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition duration-200">
-          <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 flex justify-between">
-            Messages <MessageSquare className="w-4 h-4 text-orange-500" />
+
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center font-bold">
+            <ShieldCheck className="w-6 h-6" />
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-1">5</div>
-          <div className="text-xs text-gray-500">Unread messages</div>
+          <div>
+            <div className="text-lg font-bold text-slate-900 capitalize">{verificationStatus}</div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Verification Status</div>
+          </div>
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 2-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         
-
-
-        {/* Your events */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Your events</h2>
-            <button className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition">Manage</button>
+        {/* Your Posted Opportunities */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Your Job Postings</h2>
+              <p className="text-xs text-slate-500">Track candidates and moderation status</p>
+            </div>
+            <Link href="/student/jobs" className="text-xs font-bold text-blue-600 hover:underline">
+              Manage All →
+            </Link>
           </div>
-          <div className="space-y-4">
-            {EVENTS.map(e => (
-              <div key={e.id} className="flex items-start gap-3">
-                <div className="mt-1 bg-blue-100 text-blue-600 p-2 rounded-lg">
-                  <CalendarIcon className="w-5 h-5" />
+
+          {loading ? (
+            <div className="py-8 text-center text-xs text-slate-400">Loading your jobs...</div>
+          ) : myJobs.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-400">
+              You haven't posted any jobs or internships yet.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myJobs.slice(0, 4).map((j) => (
+                <div key={j.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900">{j.title}</h3>
+                    <p className="text-[11px] text-slate-500">{j.company} • {j.location}</p>
+                  </div>
+                  <span className={`px-2.5 py-0.5 text-[10px] font-bold rounded-full uppercase ${
+                    j.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                    j.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {j.status}
+                  </span>
                 </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm">{e.title}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{e.registered}/{e.seats} registered • {e.date}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Student messages */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-900">Student messages</h2>
-            <button className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition">Open chat</button>
+        {/* University Announcements */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">SOET Campus Broadcasts</h2>
+              <p className="text-xs text-slate-500">Official updates from administration</p>
+            </div>
           </div>
-          <div className="space-y-4">
-            {CHATS.map(c => (
-              <div key={c.id} className="flex items-center gap-3 group cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  {c.avatar}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-gray-900 text-sm truncate group-hover:text-blue-600 transition">{c.name}</div>
-                  <div className="text-xs text-gray-500 truncate">{c.last}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Engagement chart mock */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Engagement overview</h2>
-          <div className="h-32 flex items-end gap-2 pb-2">
-            {[12, 18, 15, 22, 28, 24].map((val, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                <div className="w-full bg-blue-100 group-hover:bg-blue-600 transition-colors rounded-t-sm" style={{ height: `${(val / 28) * 100}%` }}></div>
-                <div className="text-[10px] text-gray-400 font-medium">
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i]}
+          {announcements.length === 0 ? (
+            <div className="py-8 text-center text-xs text-slate-400">No active announcements.</div>
+          ) : (
+            <div className="space-y-4">
+              {announcements.slice(0, 3).map((a) => (
+                <div key={a.id} className="p-4 bg-blue-50/40 rounded-2xl border border-blue-100">
+                  <h3 className="text-xs font-bold text-slate-900">{a.title}</h3>
+                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">{a.content}</p>
+                  <span className="text-[10px] text-slate-400 mt-2 block font-medium">
+                    {new Date(a.created_at).toLocaleDateString()}
+                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
       </div>

@@ -1,78 +1,133 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Search } from 'lucide-react';
+import { adminService, UserManagementItem } from '@/lib/services/adminService';
+import { GraduationCap, Search, Ban, CheckCircle2, UserCheck } from 'lucide-react';
 
 export default function AdminStudentsPage() {
-  const students = [
-    { id: 1, name: 'Aarav Mehta', email: 'aarav.mehta@soet.edu', branch: 'CSE', batch: '2026', status: 'Active' },
-    { id: 2, name: 'Kavya Singh', email: 'kavya.singh@soet.edu', branch: 'ECE', batch: '2025', status: 'Active' },
-    { id: 3, name: 'Vikram Joshi', email: 'v.joshi@soet.edu', branch: 'MECH', batch: '2026', status: 'Inactive' }
-  ];
+  const [students, setStudents] = useState<UserManagementItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+
+  const loadStudents = async () => {
+    setLoading(true);
+    try {
+      const data = await adminService.getAllStudents();
+      setStudents(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+  const handleToggleActive = async (student: UserManagementItem) => {
+    try {
+      await adminService.toggleUserActive(student.id, student.is_active);
+      loadStudents();
+    } catch (err: any) {
+      alert(err.message || 'Action failed');
+    }
+  };
+
+  const filtered = students.filter(
+    (s) =>
+      s.full_name.toLowerCase().includes(search.toLowerCase()) ||
+      s.email.toLowerCase().includes(search.toLowerCase()) ||
+      s.department?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <DashboardLayout>
-      <div className="flex items-center text-sm text-gray-500 mb-6">
-        <span>Admin</span><span className="mx-2">/</span><span className="font-medium text-gray-900">Manage Students</span>
+      {/* Breadcrumbs */}
+      <div className="flex items-center text-xs font-semibold text-slate-400 mb-6 uppercase tracking-wider">
+        <span>Administration</span>
+        <span className="mx-2 text-slate-300">/</span>
+        <span className="text-blue-600">Students Management</span>
       </div>
-      
-      <div className="flex justify-between items-center mb-8">
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Students</h1>
-          <p className="text-gray-500">View and manage all registered student accounts.</p>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Enrolled Students Directory</h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Manage student registrations, academic branches, and account permissions.
+          </p>
         </div>
-        <button className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition">Add Student</button>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8 flex gap-4 p-4">
-        <div className="relative flex-1">
-          <Search className="w-5 h-5 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input type="text" placeholder="Search students by name, email, or branch..." className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" />
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        {/* Search */}
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by name, email, department..."
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <span className="text-xs font-semibold text-slate-500">
+            Total: {filtered.length} Students
+          </span>
         </div>
-        <button className="bg-gray-900 text-white px-8 py-3 rounded-xl font-bold">Filter</button>
-      </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="p-4 font-semibold text-gray-600 text-sm">Student</th>
-              <th className="p-4 font-semibold text-gray-600 text-sm">Branch & Batch</th>
-              <th className="p-4 font-semibold text-gray-600 text-sm">Status</th>
-              <th className="p-4 font-semibold text-gray-600 text-sm text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map(student => (
-              <tr key={student.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold">
-                      {student.name.split(' ').map(n=>n[0]).join('')}
-                    </div>
-                    <div>
-                      <div className="font-bold text-gray-900">{student.name}</div>
-                      <div className="text-xs text-gray-500">{student.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <div className="font-medium text-gray-800">{student.branch}</div>
-                  <div className="text-xs text-gray-500">Batch of {student.batch}</div>
-                </td>
-                <td className="p-4">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full uppercase ${student.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
-                    {student.status}
-                  </span>
-                </td>
-                <td className="p-4 text-right">
-                  <button className="text-blue-600 hover:text-blue-800 font-medium text-sm mr-4">Edit</button>
-                  <button className="text-red-600 hover:text-red-800 font-medium text-sm">Suspend</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {loading ? (
+          <div className="p-12 text-center text-xs text-slate-400">Loading student accounts...</div>
+        ) : filtered.length === 0 ? (
+          <div className="p-12 text-center text-xs text-slate-400">No students found.</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
+                <tr>
+                  <th className="py-3 px-6">Student</th>
+                  <th className="py-3 px-6">Department</th>
+                  <th className="py-3 px-6">Course / Batch</th>
+                  <th className="py-3 px-6">Status</th>
+                  <th className="py-3 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                {filtered.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-50/50 transition">
+                    <td className="py-4 px-6">
+                      <div className="font-bold text-slate-900">{s.full_name}</div>
+                      <div className="text-[11px] text-slate-400">{s.email}</div>
+                    </td>
+                    <td className="py-4 px-6">{s.department || '—'}</td>
+                    <td className="py-4 px-6">{s.course_or_company || 'B.Tech'} ({s.graduation_year || '—'})</td>
+                    <td className="py-4 px-6">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        s.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {s.is_active ? 'Active' : 'Suspended'}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <button
+                        onClick={() => handleToggleActive(s)}
+                        className={`px-3 py-1.5 rounded-xl font-bold text-xs transition ${
+                          s.is_active
+                            ? 'bg-red-50 text-red-700 hover:bg-red-100'
+                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        }`}
+                      >
+                        {s.is_active ? 'Suspend Account' : 'Reactivate'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
