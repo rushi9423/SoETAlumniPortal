@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { getUser } from '@/lib/db';
 
 export async function POST(req: Request) {
@@ -9,13 +10,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Missing fields' }, { status: 400 });
     }
 
-    // Attempt to find the user in Vercel KV
     const user = await getUser(email) as any;
 
     if (!user) {
-      // For demonstration if KV is empty, mock a successful login if the role matches the email prefix
-      // e.g. student@soet.edu -> student, admin@soet.edu -> admin
       if (email.startsWith(selectedRole)) {
+        cookies().set('session_userid', 'mock-user-123', { httpOnly: true, path: '/' });
         return NextResponse.json({ 
           message: 'Success (Mocked)', 
           role: selectedRole,
@@ -25,19 +24,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'User not found' }, { status: 401 });
     }
 
-    // IMPORTANT: Check Actual Role against Selected Role
     if (user.role !== selectedRole) {
       return NextResponse.json({ 
         message: `Incorrect role selected. Please select ${user.role} and try again.` 
       }, { status: 403 });
     }
 
-    // Verify Password (in a real app, use bcrypt)
     if (user.password !== password) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    // Check account status
     if (user.status === 'suspended') {
       return NextResponse.json({ message: 'Account suspended.' }, { status: 403 });
     }
@@ -45,12 +41,16 @@ export async function POST(req: Request) {
     if (user.role === 'alumni' && user.status === 'pending') {
       return NextResponse.json({ message: 'Your alumni account is awaiting verification.' }, { status: 403 });
     }
+    
+    if (user.status === 'rejected') {
+      return NextResponse.json({ message: 'Your account has been rejected.' }, { status: 403 });
+    }
 
-    // Success
+    cookies().set('session_userid', user.id, { httpOnly: true, path: '/' });
+
     return NextResponse.json({
       message: 'Login successful',
       role: user.role,
-      token: 'mock-jwt-token-123',
       userId: user.id
     });
 

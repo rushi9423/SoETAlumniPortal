@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/AuthProvider';
 import { 
   Home, Users, Briefcase, CheckCircle, Calendar, 
   MessageSquare, Bell, User, Settings, Info, 
@@ -27,11 +28,30 @@ const moreNavItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, logout, loading } = useAuth();
 
-  const handleLogout = () => {
-    router.push('/');
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   };
+
+  const getFirstName = (name: string) => {
+    if (!name) return 'User';
+    return name.split(' ')[0];
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>;
+  }
+
+  const userInitials = user?.profile?.fullName ? getInitials(user.profile.fullName) : 'U';
+  const userName = user?.profile?.fullName || 'User';
+  const firstName = getFirstName(userName);
+  const userEmail = user?.email || '';
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
@@ -95,15 +115,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="p-4 bg-[#121E33] border-t border-gray-800">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
-              AM
+              {userInitials}
             </div>
             <div>
-              <p className="text-sm font-semibold text-white leading-tight">Aarav Mehta</p>
-              <p className="text-xs text-gray-400">aarav.mehta@soet.edu</p>
+              <p className="text-sm font-semibold text-white leading-tight truncate w-40">{userName}</p>
+              <p className="text-xs text-gray-400 truncate w-40">{userEmail}</p>
             </div>
           </div>
           <button 
-            onClick={handleLogout}
+            onClick={logout}
             className="flex items-center text-sm text-gray-400 hover:text-white transition-colors w-full px-2 py-1"
           >
             <LogOut className="w-4 h-4 mr-2" />
@@ -134,9 +154,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </button>
             <div className="flex items-center space-x-2 border-l border-gray-200 pl-6 cursor-pointer">
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                AM
+                {userInitials}
               </div>
-              <span className="text-sm font-medium text-gray-700">Aarav</span>
+              <span className="text-sm font-medium text-gray-700">{firstName}</span>
             </div>
           </div>
         </header>

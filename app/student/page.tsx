@@ -1,7 +1,19 @@
 'use client';
 import DashboardLayout from '@/components/DashboardLayout';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function StudentDashboard() {
+  const { user } = useAuth();
+  
+  const getFirstName = (name?: string) => {
+    if (!name) return 'Student';
+    return name.split(' ')[0];
+  };
+
+  const firstName = getFirstName(user?.profile?.fullName);
+  const department = user?.profile?.department || 'Department Unknown';
+  const batch = user?.profile?.batch || 'Batch Unknown';
+
   return (
     <DashboardLayout>
       {/* Breadcrumbs */}
@@ -14,8 +26,8 @@ export default function StudentDashboard() {
       {/* Hero Section */}
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, Aarav</h1>
-          <p className="text-gray-500 text-sm">B.Tech CSE • Final Year • Batch 2026</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, {firstName}</h1>
+          <p className="text-gray-500 text-sm">B.Tech {department} • Student • Batch {batch}</p>
         </div>
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-sm">
           Find mentors
