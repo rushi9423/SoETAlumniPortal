@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(null);
           // If we are on a protected route and unauthorized, redirect to login
           if (pathname.startsWith('/student') || pathname.startsWith('/alumni') || pathname.startsWith('/admin')) {
-            router.push('/');
+            router.push('/login');
           }
         }
       } catch (e) {
