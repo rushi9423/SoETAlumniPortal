@@ -26,7 +26,7 @@ export default function AlumniDashboard() {
   const userName = user?.profile?.fullName || 'Alumni User';
   const company = user?.profile?.company || 'Company';
   const batch = user?.profile?.batch || 'Batch';
-  const title = user?.profile?.jobTitle || 'Role';
+  const title = (user?.profile as any)?.jobTitle || 'Role';
   
   return (
     <DashboardLayout>
