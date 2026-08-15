@@ -56,21 +56,20 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden font-sans">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0B1528] text-gray-300 flex flex-col justify-between hidden md:flex shrink-0">
-        <div>
-          {/* Logo */}
-          <div className="h-16 flex items-center px-6 border-b border-gray-800">
-            <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold mr-3">
-              SP
-            </div>
-            <div>
-              <h1 className="text-white font-semibold leading-tight">SOET Portal</h1>
-              <p className="text-xs text-gray-400">Student</p>
-            </div>
+      <aside className="w-64 bg-[#0B1528] text-gray-300 flex flex-col hidden md:flex shrink-0 h-full">
+        {/* Logo */}
+        <div className="h-16 flex items-center px-6 border-b border-gray-800 shrink-0">
+          <div className="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold mr-3">
+            SP
           </div>
+          <div>
+            <h1 className="text-white font-semibold leading-tight">SOET Portal</h1>
+            <p className="text-xs text-gray-400">Student</p>
+          </div>
+        </div>
 
-          {/* Navigation */}
-          <div className="px-4 py-6">
+        {/* Navigation */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-thumb-gray-700">
             <p className="text-xs font-semibold text-gray-500 mb-4 px-2 tracking-wider">MAIN</p>
             <nav className="space-y-1">
               {mainNavItems.map((item) => {
@@ -108,11 +107,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 );
               })}
             </nav>
-          </div>
         </div>
 
         {/* User Profile Section */}
-        <div className="p-4 bg-[#121E33] border-t border-gray-800">
+        <div className="p-4 bg-[#121E33] border-t border-gray-800 shrink-0">
           <div className="flex items-center mb-4">
             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
               {userInitials}
