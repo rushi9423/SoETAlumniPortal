@@ -4,7 +4,7 @@ import { kv } from '@vercel/kv';
 
 export async function GET() {
   try {
-    const userId = cookies().get('session_userid')?.value;
+    const userId = (await cookies()).get('session_userid')?.value;
     
     if (!userId) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

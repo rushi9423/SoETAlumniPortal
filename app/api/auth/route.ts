@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     if (!user) {
       if (email.startsWith(selectedRole)) {
-        cookies().set('session_userid', 'mock-user-123', { httpOnly: true, path: '/' });
+        (await cookies()).set('session_userid', 'mock-user-123', { httpOnly: true, path: '/' });
         return NextResponse.json({ 
           message: 'Success (Mocked)', 
           role: selectedRole,
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Your account has been rejected.' }, { status: 403 });
     }
 
-    cookies().set('session_userid', user.id, { httpOnly: true, path: '/' });
+    (await cookies()).set('session_userid', user.id, { httpOnly: true, path: '/' });
 
     return NextResponse.json({
       message: 'Login successful',
