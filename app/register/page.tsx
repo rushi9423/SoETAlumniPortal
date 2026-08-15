@@ -9,17 +9,41 @@ export default function RegisterPage() {
   const [tab, setTab] = useState<'student' | 'alumni' | 'admin'>('student');
   const [form, setForm] = useState({ name: '', email: '', password: '', branch: 'CSE', batch: '2026', company: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     
-    // In a real app, this would create the user in the database.
-    // For this prototype, we simulate creation and redirect to login.
-    setTimeout(() => {
+    try {
+      const payload = {
+        fullName: form.name,
+        email: form.email,
+        password: form.password,
+        role: tab,
+        branch: form.branch,
+        batch: form.batch,
+        company: form.company
+      };
+
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        router.push('/login');
+      } else {
+        const data = await res.json();
+        setError(data.message || 'Registration failed');
+      }
+    } catch (err) {
+      setError('An error occurred during registration');
+    } finally {
       setLoading(false);
-      router.push('/login');
-    }, 800);
+    }
   };
 
   return (
@@ -152,6 +176,8 @@ export default function RegisterPage() {
                 <p className="text-xs text-gray-500 mt-1.5">Please use your official @soet.edu email address.</p>
               </div>
             )}
+
+            {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
 
             <button 
               type="submit" 
