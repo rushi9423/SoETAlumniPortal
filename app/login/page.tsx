@@ -8,8 +8,8 @@ import { useAuth } from '@/components/AuthProvider';
 export default function LoginPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const [email, setEmail] = useState('aarav.mehta@soet.edu');
-  const [password, setPassword] = useState('demo1234');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,10 +46,6 @@ export default function LoginPage() {
     }
   };
 
-  const setDemo = (roleEmail: string) => {
-    setEmail(roleEmail);
-    setPassword('demo1234');
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
@@ -71,8 +67,6 @@ export default function LoginPage() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900">Sign in</h1>
           </div>
-          
-          <p className="text-gray-500 text-sm mb-6">Use a demo account below to access the platform.</p>
 
           <form onSubmit={handleLogin} className="space-y-4 mb-6">
             <div>
@@ -94,7 +88,6 @@ export default function LoginPage() {
                 className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 required 
               />
-              <p className="text-xs text-gray-500 mt-1.5">Any password works in this demo.</p>
             </div>
 
             {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
@@ -108,23 +101,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="relative flex items-center py-4 mb-2">
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">Quick demo logins</span>
-            <div className="flex-grow border-t border-gray-200"></div>
-          </div>
-
-          <div className="space-y-3">
-            <button type="button" onClick={() => setDemo('aarav.mehta@soet.edu')} className="w-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl transition">
-              Student · Aarav Mehta
-            </button>
-            <button type="button" onClick={() => setDemo('priya.sharma@alumni.edu')} className="w-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl transition">
-              Alumni · Priya Sharma
-            </button>
-            <button type="button" onClick={() => setDemo('admin@soet.edu')} className="w-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2.5 rounded-xl transition">
-              Admin · Dr. R. Kapoor
-            </button>
-          </div>
 
           <p className="text-center text-sm text-gray-500 mt-8">
             New here? <Link href="/register" className="text-blue-600 font-bold hover:underline">Create an account</Link>
