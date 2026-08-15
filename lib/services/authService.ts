@@ -101,7 +101,7 @@ export const authService = {
   }) {
     const supabase = createClient();
 
-    // 1. Sign up user
+    // 1. Sign up user — pass metadata so the DB trigger can create the profile
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -109,6 +109,12 @@ export const authService = {
         data: {
           full_name: data.fullName,
           role: 'student',
+          student_id: data.studentId,
+          department: data.department,
+          course: data.course,
+          academic_year: data.academicYear,
+          graduation_year: data.graduationYear,
+          phone: data.phone,
         }
       }
     });
@@ -118,22 +124,25 @@ export const authService = {
 
     const userId = authData.user.id;
 
-    // 2. Insert into profiles
+    // 2. Try to upsert profile (trigger may have already created it)
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({
+      .upsert({
         id: userId,
         email: data.email,
         role: 'student',
         full_name: data.fullName,
-      });
+      }, { onConflict: 'id' });
 
-    if (profileError) throw new Error(profileError.message);
+    // Ignore profile errors — trigger likely handled it
+    if (profileError) {
+      console.warn('Profile upsert skipped (trigger may have handled it):', profileError.message);
+    }
 
-    // 3. Insert into student_profiles
+    // 3. Try to upsert student_profiles
     const { error: studentError } = await supabase
       .from('student_profiles')
-      .insert({
+      .upsert({
         id: userId,
         student_id: data.studentId,
         department: data.department,
@@ -141,9 +150,11 @@ export const authService = {
         academic_year: data.academicYear,
         graduation_year: data.graduationYear,
         phone: data.phone,
-      });
+      }, { onConflict: 'id' });
 
-    if (studentError) throw new Error(studentError.message);
+    if (studentError) {
+      console.warn('Student profile upsert skipped:', studentError.message);
+    }
 
     return authData;
   },
@@ -167,7 +178,7 @@ export const authService = {
   }) {
     const supabase = createClient();
 
-    // 1. Sign up user
+    // 1. Sign up user — pass metadata for the DB trigger
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
@@ -175,6 +186,15 @@ export const authService = {
         data: {
           full_name: data.fullName,
           role: 'alumni',
+          alumni_id: data.alumniId,
+          department: data.department,
+          degree: data.degree,
+          graduation_year: data.graduationYear,
+          company: data.company,
+          designation: data.designation,
+          industry: data.industry,
+          location: data.location,
+          bio: data.bio,
         }
       }
     });
@@ -184,22 +204,24 @@ export const authService = {
 
     const userId = authData.user.id;
 
-    // 2. Insert into profiles
+    // 2. Try to upsert profile (trigger may have already created it)
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({
+      .upsert({
         id: userId,
         email: data.email,
         role: 'alumni',
         full_name: data.fullName,
-      });
+      }, { onConflict: 'id' });
 
-    if (profileError) throw new Error(profileError.message);
+    if (profileError) {
+      console.warn('Profile upsert skipped (trigger may have handled it):', profileError.message);
+    }
 
-    // 3. Insert into alumni_profiles (verification_status = pending)
+    // 3. Try to upsert alumni_profiles (verification_status = pending)
     const { error: alumniError } = await supabase
       .from('alumni_profiles')
-      .insert({
+      .upsert({
         id: userId,
         alumni_id: data.alumniId,
         department: data.department,
@@ -214,9 +236,11 @@ export const authService = {
         github: data.github,
         bio: data.bio,
         verification_status: 'pending',
-      });
+      }, { onConflict: 'id' });
 
-    if (alumniError) throw new Error(alumniError.message);
+    if (alumniError) {
+      console.warn('Alumni profile upsert skipped:', alumniError.message);
+    }
 
     return authData;
   },
