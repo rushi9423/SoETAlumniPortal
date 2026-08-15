@@ -12,10 +12,7 @@ export async function POST(req: Request) {
     // Assign an ID (simple random string for demonstration, typically UUID)
     const id = Math.random().toString(36).substring(2, 15);
     
-    // Status logic: Students are active immediately. Alumni are pending. Admin can't be registered publicly.
-    if (role === 'admin') {
-      return NextResponse.json({ message: 'Cannot register as admin' }, { status: 403 });
-    }
+    // Status logic: Students and Admins are active immediately. Alumni are pending.
 
     const status = role === 'alumni' ? 'pending' : 'active';
 
