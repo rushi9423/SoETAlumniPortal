@@ -89,6 +89,12 @@ export const authService = {
         email: data.email,
         password: data.password,
         role: 'student',
+        student_id: data.studentId,
+        department: data.department,
+        course: data.course,
+        academic_year: data.academicYear,
+        graduation_year: data.graduationYear,
+        phone: data.phone,
       }),
     });
 
@@ -128,6 +134,18 @@ export const authService = {
         email: data.email,
         password: data.password,
         role: 'alumni',
+        alumni_id: data.alumniId,
+        department: data.department,
+        degree: data.degree,
+        graduation_year: data.graduationYear,
+        company: data.company,
+        designation: data.designation,
+        industry: data.industry,
+        location: data.location,
+        skills: data.skills || [],
+        linkedin: data.linkedin,
+        github: data.github,
+        bio: data.bio,
       }),
     });
 
