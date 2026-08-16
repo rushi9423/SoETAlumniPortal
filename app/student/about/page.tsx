@@ -7,7 +7,7 @@ export default function AboutPage() {
       <div className="flex items-center text-sm text-gray-500 mb-6">
         <span>Home</span><span className="mx-2">/</span><span className="font-medium text-gray-900">About</span>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">About SOET Alumni Portal</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">About SOET Connect</h1>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 max-w-3xl p-8 prose">
         <p className="text-lg text-gray-700 mb-4">

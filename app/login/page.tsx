@@ -50,7 +50,7 @@ export default function LoginPage() {
           </div>
         </div>
         <h2 className="mt-5 text-center text-3xl font-extrabold text-white tracking-tight">
-          SOET Alumni Portal
+          SOET Connect
         </h2>
         <p className="mt-2 text-center text-sm text-slate-400 font-medium">
           Sign in to access your enterprise dashboard

@@ -49,7 +49,7 @@ export default function AdminDashboard() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">SOET Admin Console</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">SOET Connect Admin Console</h1>
           <p className="text-xs text-slate-500 mt-1">
             Real-time platform metrics, verification queue, and moderations.
           </p>

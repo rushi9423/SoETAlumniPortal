@@ -58,7 +58,7 @@ export default function AlumniDirectoryPage() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">SOET Alumni Directory</h1>
+          <h1 className="text-2xl font-black text-slate-900 tracking-tight">SOET Connect Directory</h1>
           <p className="text-xs text-slate-500 mt-1">
             Connect with verified graduates and industry professionals from our institution.
           </p>

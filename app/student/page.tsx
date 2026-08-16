@@ -53,7 +53,7 @@ export default function StudentDashboard() {
       <div className="bg-gradient-to-r from-blue-900 to-indigo-900 rounded-3xl p-8 text-white shadow-xl shadow-blue-950/20 mb-8 relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <span className="inline-block px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-full text-xs font-bold text-blue-200 mb-3">
-            Academic Year • SOET Portal
+            Academic Year • SOET Connect
           </span>
           <h1 className="text-3xl font-extrabold tracking-tight mb-2">
             Welcome back, {firstName}!
@@ -106,7 +106,7 @@ export default function StudentDashboard() {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="text-lg font-bold text-slate-900">Recommended Jobs & Internships</h2>
-                <p className="text-xs text-slate-500">Verified postings by SOET Alumni</p>
+                <p className="text-xs text-slate-500">Verified postings by SOET Connect</p>
               </div>
               <Link href="/student/jobs" className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
                 View all <ArrowRight className="w-3.5 h-3.5" />

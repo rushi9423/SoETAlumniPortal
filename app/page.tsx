@@ -24,7 +24,7 @@ export default function LandingPage() {
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md shadow-blue-600/30">
             SP
           </div>
-          SOET Portal
+          SOET Connect
         </div>
         <div className="flex items-center gap-4">
           <Link href="/login" className="text-gray-600 hover:text-gray-900 font-medium text-sm">Sign in</Link>
@@ -40,7 +40,7 @@ export default function LandingPage() {
           <div className="flex-1 space-y-6">
             <div className="text-blue-600 font-semibold tracking-wide uppercase text-sm">School of Engineering & Technology</div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-              Your career network, <br/>built for SOET.
+              Your career network, <br/>built for SOET Connect.
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl leading-relaxed">
               Connect with alumni, apply for roles, and join events — one portal for students, graduates, and administrators.
