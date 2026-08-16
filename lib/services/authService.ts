@@ -245,6 +245,47 @@ export const authService = {
     return authData;
   },
 
+  async registerAdmin(data: {
+    fullName: string;
+    email: string;
+    password: string;
+  }) {
+    const supabase = createClient();
+
+    // 1. Sign up user with admin role metadata
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          full_name: data.fullName,
+          role: 'admin',
+        }
+      }
+    });
+
+    if (authError) throw new Error(authError.message);
+    if (!authData.user) throw new Error('Failed to create admin account.');
+
+    const userId = authData.user.id;
+
+    // 2. Upsert profile as admin (trigger may have already created it)
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .upsert({
+        id: userId,
+        email: data.email,
+        role: 'admin',
+        full_name: data.fullName,
+      }, { onConflict: 'id' });
+
+    if (profileError) {
+      console.warn('Admin profile upsert skipped (trigger may have handled it):', profileError.message);
+    }
+
+    return authData;
+  },
+
   async signOut() {
     const supabase = createClient();
     await supabase.auth.signOut();

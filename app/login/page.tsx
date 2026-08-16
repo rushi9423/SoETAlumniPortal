@@ -171,8 +171,11 @@ export default function LoginPage() {
             </div>
           ) : (
             <div className="mt-6 text-center border-t border-slate-800/80 pt-5">
-              <p className="text-xs text-slate-500">
-                Admin accounts are provisioned securely by project administration.
+              <p className="text-xs text-slate-400">
+                Don&apos;t have an admin account?{' '}
+                <Link href="/register/admin" className="font-semibold text-red-400 hover:text-red-300 transition">
+                  Register as Admin
+                </Link>
               </p>
             </div>
           )}
