@@ -31,7 +31,9 @@ export const authService = {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.detail || 'Login failed. Please check your credentials.');
+      throw new Error(
+        data.detail || 'Login failed. Please check your credentials.'
+      );
     }
 
     if (!data.access_token || !data.user) {
@@ -64,6 +66,78 @@ export const authService = {
       profile,
       access_token: data.access_token,
     };
+  },
+
+  async registerStudent(data: {
+    fullName: string;
+    email: string;
+    password: string;
+    studentId?: string;
+    department: string;
+    course?: string;
+    academicYear?: string;
+    graduationYear?: string;
+    phone?: string;
+  }) {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.fullName,
+        email: data.email,
+        password: data.password,
+        role: 'student',
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.detail || 'Student registration failed.');
+    }
+
+    return result;
+  },
+
+  async registerAlumni(data: {
+    fullName: string;
+    email: string;
+    password: string;
+    alumniId?: string;
+    department: string;
+    degree?: string;
+    graduationYear: string;
+    company?: string;
+    designation?: string;
+    industry?: string;
+    location?: string;
+    skills?: string[];
+    linkedin?: string;
+    github?: string;
+    bio?: string;
+  }) {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.fullName,
+        email: data.email,
+        password: data.password,
+        role: 'alumni',
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.detail || 'Alumni registration failed.');
+    }
+
+    return result;
   },
 
   async signOut() {
