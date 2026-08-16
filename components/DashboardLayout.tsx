@@ -44,7 +44,7 @@ const adminNavItems = [
   { name: 'Students Management', icon: GraduationCap, href: '/admin/students' },
   { name: 'Alumni Management', icon: Users, href: '/admin/alumni' },
   { name: 'Job Approvals', icon: Briefcase, href: '/admin/jobs' },
-  { name: 'Event Approvals', icon: Calendar, href: '/admin/events' },
+  { name: 'Events', icon: Calendar, href: '/admin/events' },
   { name: 'Announcements', icon: Megaphone, href: '/admin/announcements' },
   { name: 'Reports & Analytics', icon: BarChart3, href: '/admin/reports' },
 ];
