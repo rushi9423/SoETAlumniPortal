@@ -105,6 +105,11 @@ BEGIN
       bio = COALESCE(EXCLUDED.bio, alumni_profiles.bio);
   END IF;
 
+  -- Auto-confirm email so users can sign in immediately
+  UPDATE auth.users 
+  SET email_confirmed_at = COALESCE(email_confirmed_at, NOW())
+  WHERE id = NEW.id;
+
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -114,3 +119,7 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 3. Confirm all existing unconfirmed users
+UPDATE auth.users SET email_confirmed_at = NOW() WHERE email_confirmed_at IS NULL;
+
